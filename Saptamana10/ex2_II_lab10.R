@@ -7,12 +7,7 @@ LNM_student = function(n, r)
   medie_as = 0 #medie asteptata
   ds_as = sqrt(r/(r-2)) #deviatie standard asteptata
   
-  cat("Media eșantionului:", medie_esantion, "\n")
-  cat("Deviația standard a eșantionului:", ds, "\n")
-  cat("Media așteptată:", medie_as, "\n")
-  cat("Deviația standard așteptată:", ds_as, "\n")
-  
-  if((abs(medie_esantion - medie_as) < ds_as/sqrt(n)) && (abs(ds - ds_as) < ds_as/sqrt(n)))
+  if(abs(medie_esantion - medie_as < ds_as/sqrt(n)) && abs(ds - ds_as) < ds_as/sqrt(n))
     cat("LNM este verificată pentru distribuția Student(",r,") cu n = ", n, "\n\n")
   else 
     cat("LNM nu este verificată pentru distribuția Student(",r,") cu n = ", n, "\n\n")
