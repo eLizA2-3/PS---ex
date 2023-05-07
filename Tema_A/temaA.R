@@ -16,6 +16,7 @@ graph_a=function(lam, p, n, k)
           args.legend=list(x="top", cex=0.75))
 }
 graph_a(3.5, 0.25, 10, 4)
+Sys.sleep(10)
 
 
 ###################################################
@@ -66,102 +67,103 @@ poisson_prob = function(lam) {
 cat("Cea mai mica valoare a lui k0 a.i P(Y >= k0) < 1e-7 este ", poisson_prob(2.8), "\n")
 
 ####################################################
- #A2 (a)    
-  functie_a = function(file_name) 
+#A2 (a)    
+functie_a = function(file_name) 
+{
+  # Citesc datele din fisier
+  esantion =read.csv(file_name, header=TRUE, sep=',')
+  
+  # Calculam statisticile pentru primul esantion
+  esantion1 = esantion$P   
+  media1 = mean(esantion1)
+  mediana1 = median(esantion1)
+  cvartil1 = quantile(esantion1, c(0.25, 0.75))
+  ds1 = sd(esantion1)
+  
+  # Calculam statisticile pentru al doilea esantion
+  esantion2 = esantion$S
+  media2 = mean(esantion2)
+  mediana2 = median(esantion2)
+  cvartil2 = quantile(esantion2, c(0.25, 0.75))
+  ds2 = sd(esantion2)
+  
+  cat("\nStatistici pentru primul esantion:\n")
+  cat("Media: ", round(media1, 3), "\n") 
+  cat("Mediana: ", round(mediana1, 3), "\n")
+  cat("Deviatia standard: ", round(ds1, 3), "\n")
+  cat("Cvartila 1: ", round(cvartil1[1], 3), "\n")
+  cat("Cvartila 2: ", round(cvartil1[2], 3), "\n\n")
+  
+  cat("Statistici pentru al doilea esantion:\n")
+  cat("Media: ", round(media2, 3), "\n") 
+  cat("Mediana: ", round(mediana2, 3), "\n")
+  cat("Deviatia standard: ", round(ds2, 3), "\n")
+  cat("Cvartila 1: ", round(cvartil2[1], 3), "\n")
+  cat("Cvartila 2: ", round(cvartil2[2], 3), "\n\n\n")
+  
+}
+functie_a("note.csv")
+
+
+###################################################
+#A2 (b)
+functie_valori_aberante = function(file_name, care_esantion)
+{
+  esantion =read.csv(file_name, header=TRUE, sep=',') 
+  P = esantion[[1]]
+  S = esantion[[2]]
+  if (care_esantion == "P")
   {
-    # Citesc datele din fisier
-    esantion = scan(file_name)
-  
-    # Calculam statisticile pentru primul esantion
-    esantion1 = esantion[1:193]
-    media1 = mean(esantion1)
-    mediana1 = median(esantion1)
-    cvartil1 = quantile(esantion1, c(0.25, 0.75))
-    ds1 = sd(esantion1)
-  
-    # Calculam statisticile pentru al doilea esantion
-    esantion2 = esantion[194:386]
-    media2 = mean(esantion2)
-    mediana2 = median(esantion2)
-    cvartil2 = quantile(esantion2, c(0.25, 0.75))
-    ds2 = sd(esantion2)
-
-    cat("\nStatistici pentru primul esantion:\n")
-    cat("Media: ", round(media1, 3), "\n") 
-    cat("Mediana: ", round(mediana1, 3), "\n")
-    cat("Deviatia standard: ", round(ds1, 3), "\n")
-    cat("Cvartila 1: ", round(cvartil1[1], 3), "\n")
-    cat("Cvartila 2: ", round(cvartil1[2], 3), "\n\n")
-  
-    cat("Statistici pentru al doilea esantion:\n")
-    cat("Media: ", round(media2, 3), "\n") 
-    cat("Mediana: ", round(mediana2, 3), "\n")
-    cat("Deviatia standard: ", round(ds2, 3), "\n")
-    cat("Cvartila 1: ", round(cvartil2[1], 3), "\n")
-    cat("Cvartila 2: ", round(cvartil2[2], 3), "\n\n\n")
-  
- }
- functie_a("date.txt")
- 
- 
- ###################################################
- #A2 (b)
- functie_valori_aberante = function(file_name, care_esantion)
- {
-    esantion = scan(file_name) 
-    P = esantion[1:193]
-    S = esantion[194:386]
-    if (care_esantion == "P")
-    {
-      # Calculam cvartilele 1 si 3 si amp1litudinea intercvartila
-      Q1 = quantile(P, 0.25)
-      Q3 = quantile(P, 0.75)
-      IQR = Q3 - Q1
-      # Determinam valorile aberante
-      val_aberante = which(P < Q1 - 1.5*IQR | P > Q3 + 1.5*IQR)
-      # Eliminam valorile aberante din esantion
-      P = P[-val_aberante]
-      return(P)
-    }
-    else
-    {
-      # Calculam cvartilele 1 si 3 si amp1litudinea intercvartila
-      Q1 = quantile(S, 0.25)
-      Q3 = quantile(S, 0.75)
-      IQR = Q3 - Q1
-      # Determinam valorile aberante
-      val_aberante = which(S < Q1 - 1.5*IQR | S > Q3 + 1.5*IQR)
-      # Eliminam valorile aberante din esantion
-      S = S[-val_aberante]
-      return(S)
-    }
+    # Calculam cvartilele 1 si 3 si amp1litudinea intercvartila
+    Q1 = quantile(P, 0.25)
+    Q3 = quantile(P, 0.75)
+    IQR = Q3 - Q1
+    # Determinam valorile aberante
+    val_aberante = which(P < Q1 - 1.5*IQR | P > Q3 + 1.5*IQR)
+    # Eliminam valorile aberante din esantion
+    P <- subset(P, P >= Q1 - 1.5*IQR & P <= Q3 + 1.5*IQR)
     
- }
-
- cat("Esantionul P: a fost filtrat\n")
- esantion_filtrat_P = functie_valori_aberante("date.txt", "P")
- cat("Esantionul S: a fost filtrat\n")
- esantion_filtrat_S = functie_valori_aberante("date.txt", "S")
- 
-
- 
- ###################################################
- #A2 (c)
-
- write(esantion_filtrat_P, file = "P.txt", append = FALSE, sep = "\n")
- write(esantion_filtrat_S, file = "S.txt", append = FALSE, sep = "\n")
- 
- grafic = function(file_name)
- {
-   # Citim esantionul din fisier
-   esantion = scan(file_name)
-   
-   # Reprezentam grafic distributia frecventelor
-   hist(esantion, breaks = 59, right = FALSE, freq = TRUE,
-        col = "gold", main = "Distributia frecventelor", xlab = "Valoarea", ylab = "Frecventa")
- }
-
- grafic("P.txt")
- Sys.sleep(10) #pune pauza 10s pt a vedea schimbarea graficelor celor 2 esantioane
- grafic("S.txt")
+    return(P)
+  }
+  else
+  {
+    # Calculam cvartilele 1 si 3 si amp1litudinea intercvartila
+    Q1 = quantile(S, 0.25)
+    Q3 = quantile(S, 0.75)
+    IQR = Q3 - Q1
+    # Determinam valorile aberante
+    val_aberante = which(S < Q1 - 1.5*IQR | S > Q3 + 1.5*IQR)
+    # Eliminam valorile aberante din esantion
+    S = subset(S, S >= Q1 - 1.5*IQR & S <= Q3 + 1.5*IQR)
+    
+    return(S)
+  }
   
+}
+
+cat("Esantionul P: a fost filtrat\n")
+esantion_filtrat_P = functie_valori_aberante("note.csv", "P")
+cat("Esantionul S: a fost filtrat\n")
+esantion_filtrat_S = functie_valori_aberante("note.csv", "S")
+
+
+
+###################################################
+#A2 (c)
+
+write(esantion_filtrat_P, file = "P.txt", append = FALSE, sep = "\n")
+write(esantion_filtrat_S, file = "S.txt", append = FALSE, sep = "\n")
+
+grafic = function(file_name)
+{
+  # Citim esantionul din fisier
+  esantion = scan(file_name)
+  
+  # Reprezentam grafic distributia frecventelor
+  hist(esantion, breaks = 59, right = FALSE, freq = TRUE,
+       col = "gold", main = "Distributia frecventelor", xlab = "Valoarea", ylab = "Frecventa")
+}
+
+grafic("P.txt")
+Sys.sleep(10) #pune pauza 10s pt a vedea schimbarea graficelor celor 2 esantioane
+grafic("S.txt")
