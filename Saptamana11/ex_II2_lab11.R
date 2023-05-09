@@ -1,10 +1,10 @@
 function_integrala = function(n) {
-  sumaa = 0;
+  suma = 0;
   for(i in 1:n) {
     u = rexp(1, 3);
-    sumaa = sumaa + exp(-2*u*u);
+    suma = suma + exp(-2*u*u);
   }
-  return(sumaa/n);
+  return(suma/n);
 }
 
 MC_function= function(k, n) {
