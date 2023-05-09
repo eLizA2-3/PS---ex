@@ -1,76 +1,77 @@
-# Simulam evolutia infectiei in timp
-set.seed(123)
-n <- 40 # numarul total de computere
-p <- 0.2 # probabilitatea de infectare intre doua computere
-infected <- rep(FALSE, n) # vector cu starea initiala a fiecarui computer
-infected[1] <- TRUE # primul computer este infectat
-max_days <- 1000
-infected_count <- numeric(max_days)
-# numarul maxim de zile pe care il simulam
-for (day in 2:max_days) {
-  # infectam fiecare computer cu probabilitate p in functie de starea celorlalte computere
-  infected <- pmax(infected, rbinom(n, 1, pmax(p, rowSums(t(as.matrix(infected))) / n)))
-  # alegem k computere infectate si le vindecam
-  k <- sample(c(4, 6, 8, 10), size = 1)
-  infected[which(infected == TRUE)][sample(which(infected==TRUE), min(k, sum(infected)))] <- FALSE
+# Setam numarul de zile si numarul de computere
+nr_zile = 100
+nr_comp = 40
+
+#vector pt starea fiecarui calculator
+calculatoare = rep(0, nr_comp)
+
+# am ales ca un calculator sa fie infectat initial
+comprob_infat = sample(1:nr_comp, 1)
+calculatoare[comprob_infat] = 1
+
+# Probabilitatea infectariii unuia curat
+prob_inf = 0.2
+
+#vector pt numarului de calculatoare infectate in fiecare zi
+nr_infectate = rep(0, nr_zile)
+
+# Cream un vector pt nr de zile in care cel putin 15 calculatoare sunt infectate
+nr_infectate_15 = rep(0, nr_zile)
+
+k = c(4, 6, 8, 10)
+
+# Simulam evolutia virusului pentru fiecare zi
+for (day in 1:nr_zile) {
   
-  # daca toate computerele sunt infectate, iesim din simulare
-  if (all(infected)) {
+  # Calculez probabilitatea de a infecta un calculator curat
+  prob_inf = sum(calculatoare == 1) / nr_comp * 0.2
+  
+  # Infectarea calculatoarelor curate cu o probabilitate=prob_inf
+  for (i in 1:nr_comp)
+    if (calculatoare[i] == 0 && runif(1) < prob_inf) {
+      calculatoare[i] = 1
+    }
+  
+  # Alegem un k aleatoriu pentru a indeparta virusul
+  k = sample(k, 1)
+  
+  # Daca sunt mai putin de k calculatoare infectate, le elimin
+  if (sum(calculatoare == 1) < k) {
+    calculatoare[calculatoare == 1] = 0
+  } else {
+    # Daca sunt cel putin k calculatoare infectate, elimin k dintre ele
+    comp_inf_prob = which(calculatoare == 1)
+    sterge_i = sample(comp_inf_prob, k)
+    calculatoare[sterge_i] = 0
+  }
+  
+  # Salvam numarul de calculatoare infectate in aceasta zi
+  nr_infectate[day] = sum(calculatoare == 1)
+  
+  # Salvam numarul de zile in care cel putin 15 calculatoare sunt infectate
+  nr_infectate_15[day] = sum(nr_infectate >= 15)
+  
+  # Daca toate calculatoarele sunt infectate, parasesc simularea
+  if (sum(calculatoare == 0) == 0) 
     break
-  }
+  
 }
 
-# Probabilitatea ca toate computerele sa fie infectate este 1 daca au fost infectate toate inainte de a iesi din simulare, altfel este 0
-if (all(infected)) {
-  prob_all_infected <- 1
-} else {
-  prob_all_infected <- 0
-}
-print(prob_all_infected)
-all_infected_prob <- sum(infected_count == n) / max_days
-cat("Probabilitatea ca intr-o anumita zi toate computerele sa fie infectate:", all_infected_prob, "\n")
+# Estimez probabilitatea ca, intr-o anumita zi, toate computerele sa fie infectate       #punctul a
+toate_inf_prob = sum(nr_infectate == nr_comp) / length(nr_infectate)
+cat("Probabilitatea ca toate calculatoarele sa fie infectate intr-o anumita zi = ", toate_inf_prob, "\n")
 
 
-#b
 
-# Simulam evolutia infectiei in timp si inregistram numarul de computere infectate in fiecare zi
-set.seed(123)
-n <- 40 # numarul total de computere
-p <- 0.2 # probabilitatea de infectare intre doua computere
-max_days <- 1000 # numarul maxim de zile pe care il simulam
-infected_count <- numeric(max_days)
-for (day in 1:max_days) {
-  infected <- ifelse(day == 1, rep(FALSE, n), infected_count[day - 1] >= 1)
-  # infectam fiecare computer cu probabilitate p in functie de starea celorlalte computere
-  infected <- pmax(infected, rbinom(n, 1, pmax(p, rowSums(t(as.matrix(infected))) / n)))
-  # alegem k computere infectate si le vindecam
-  k <- sample(c(4, 6, 8,10), size = 1)
-  infected[which(infected)][sample(which(infected), min(k, sum(infected)))] <- FALSE
-  infected_count[day] <- sum(infected)
-}           
 
-at_least_15_infected_prob <- sum(infected_count >= 15) / max_days
-cat("Probabilitatea ca intr-o anumita zi cel putin 15 computere sa fie infectate:", at_least_15_infected_prob, "\n")
+prob_inf15 = sum(nr_infectate >= 15) / length(nr_infectate)  ##punctul b
+cat("Probabilitatea ca cel putin 15 calculatoare sa fie infectate intr-o anumita zi = ", prob_inf15, "\n")
 
-#C
-k <- 1.96 # pentru intervalul de incredere de 95%
-n_simulations <- 10000 # numarul de simulari pentru a estima distributia
-simulated_probs <- numeric(n_simulations)
-for (sim in 1:n_simulations) {
-  infected_count <- numeric(max_days)
-  for (day in 1:max_days) {
-    infected <- ifelse(day == 1, rep(FALSE, n), infected_count[day - 1] >= 1)
-    infected <- pmax(infected, rbinom(n, 1, pmax(p, rowSums(t(as.matrix(infected))) / n)))
-    k <- sample(c(4, 6, 8, 10), size = 1)
-    infected[which(infected)][sample(which(infected), min(k, sum(infected)))] <- FALSE
-    infected_count[day] <- sum(infected)
-  }
-  simulated_probs[sim] <- sum(infected_count >= 15) / max_days
-}
-estimated_prob <- mean(simulated_probs)
-standard_error <- sd(simulated_probs) / sqrt(n_simulations)
-lower_bound <- estimated_prob - k * standard_error
-upper_bound <- estimated_prob + k * standard_error
-cat("Probabilitatea ca intr-o anumita zi cel putin 15 computere sa fie infectate, cu o eroare de ±0.01 cu probabilitatea 0.95:",
-    estimated_prob, "+/-", k * standard_error, "\n")
-cat("Intervalul de incredere de 95% pentru aceasta probabilitate:", lower_bound, "-", upper_bound, "\n")
+
+set.seed(123)  #punctul c
+ne = 1000
+sample = matrix(sample(nr_infectate, replace = TRUE, size = length(nr_infectate) * ne), nrow = ne)
+prob_15inf_c = apply(sample, 1, function(x) sum(x >= 15) / length(x)) 
+inf_quantil = quantile(prob_15inf_c, 0.025)
+sup_quantil = quantile(prob_15inf_c, 0.975)
+cat("Probabilitatea ca cel putin 15 calculatoare sa fie infectate intr-o anumita zi cu o eroare de 0.01 cu probab de 0.95 = ", (prob_inf15 - inf_quantil), "\n")
