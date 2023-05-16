@@ -18,9 +18,8 @@ variabila_aleatoare = function(x_var, prob)
   return
 }
 
-# Exemplu de utilizare
-x_var = c(10, 22, 3)
-prob = c(0.1, 0.4, 0.5)
-
+x_var = c(10, 22, 3, 5)
+prob = c(0.1, 0.4, 0.2, 0.3)
 
 print(variabila_aleatoare(x_var, prob))
+
