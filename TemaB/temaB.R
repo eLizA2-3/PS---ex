@@ -25,6 +25,7 @@ TLC_student = function(n, r, N, z) {
   sum=0
   medie_vec = c()
   #Se generează n variabile aleatoare cu distribuție Student
+  vec = rt(n, r)
   vec_medie = mean(vec)  #media variabilelor aleatoare
   
   #valorile teoretice 
