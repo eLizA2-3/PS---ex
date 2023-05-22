@@ -1,11 +1,18 @@
 ###################################################
 #A1 (a)
+
+#lam - valoarea medie a distribuției Poisson
+#p - prob de succes într-o singură încercare în distribuția geom și binom
+#n - numărul de încercări
+#k - vector de valori de la care se vor calcula probab pt fiecare distribuție
 graph_a=function(lam, p, n, k)
 {
+  #fiecare returneaza un vector de prob
   poisson=dpois(k:n, lam)
   geometric=dgeom(k:n, p)
   binomial=dbinom(k:n, n, p)
   
+  #sunt puse impreuna si formeaza o matrice
   cases = rbind(poisson, geometric, binomial)
   
   barplot(cases,
@@ -23,26 +30,29 @@ Sys.sleep(10)
 #A1 (b)
 geometric_prob=function(n, k)
 {
-  sum=0
-  suma_f=0
-  suma_20=0
+  sum=0     #pt prob ca e numar impar
+  suma_f=0  #pt prob ca sunt nr >= 4
+  suma_20=0 #pt prob ca sunt nr <= 20
   
   a=k:n
   for(i in a)
   {
     if(i %% 2 == 1)
-      sum = sum+dgeom(i, 0.5)
+      #se adaugă probab geometrică nr gasit cu o prob de succes de 0.5
+      sum = sum+dgeom(i, 0.5) 
   }
   
   for(i in a)
   {
     if(i >=4)
+      #se adaugă probab geometrică nr gasit cu o prob de succes de 0.1
       suma_f = suma_f+dgeom(i, 0.1)
   }
   
   for(i in a)
   {
     if(i <=20)
+      #se adaugă probab geometrică nr gasit cu o prob de succes de 0.1
       suma_20 = suma_20+dgeom(i, 0.1)
   }
   print(sum)
@@ -74,14 +84,14 @@ functie_a = function(file_name)
   esantion =read.csv(file_name, header=TRUE, sep=',')
   
   # Calculam statisticile pentru primul esantion
-  esantion1 = esantion$P   
-  media1 = mean(esantion1)
-  mediana1 = median(esantion1)
-  cvartil1 = quantile(esantion1, c(0.25, 0.75))
-  ds1 = sd(esantion1)
+  esantion1 = esantion$P   #extrag coloana P
+  media1 = mean(esantion1) #media
+  mediana1 = median(esantion1) #mediana
+  cvartil1 = quantile(esantion1, c(0.25, 0.75)) #cvartilele
+  ds1 = sd(esantion1) #deviatia standard
   
   # Calculam statisticile pentru al doilea esantion
-  esantion2 = esantion$S
+  esantion2 = esantion$S   #extrag coloana S
   media2 = mean(esantion2)
   mediana2 = median(esantion2)
   cvartil2 = quantile(esantion2, c(0.25, 0.75))
@@ -109,15 +119,17 @@ functie_a("note.csv")
 #A2 (b)
 functie_valori_aberante = function(file_name, care_esantion)
 {
+  #citesc datele din fisier
   esantion =read.csv(file_name, header=TRUE, sep=',') 
-  P = esantion[[1]]
-  S = esantion[[2]]
+  P = esantion[[1]] #coloana P
+  S = esantion[[2]] #coloana S
+  
   if (care_esantion == "P")
   {
-    # Calculam cvartilele 1 si 3 si amp1litudinea intercvartila
-    Q1 = quantile(P, 0.25)
-    Q3 = quantile(P, 0.75)
-    IQR = Q3 - Q1
+    Q1 = quantile(P, 0.25) #cvartila Q1
+    Q3 = quantile(P, 0.75) #cvartila Q3
+    IQR = Q3 - Q1 #amplitudinea intercvatila
+    
     # Determinam valorile aberante
     val_aberante = which(P < Q1 - 1.5*IQR | P > Q3 + 1.5*IQR)
     # Eliminam valorile aberante din esantion
@@ -127,10 +139,10 @@ functie_valori_aberante = function(file_name, care_esantion)
   }
   else
   {
-    # Calculam cvartilele 1 si 3 si amp1litudinea intercvartila
-    Q1 = quantile(S, 0.25)
-    Q3 = quantile(S, 0.75)
-    IQR = Q3 - Q1
+    Q1 = quantile(S, 0.25) #cvartila Q3
+    Q3 = quantile(S, 0.75) #cvartila Q1
+    IQR = Q3 - Q1 #amp1litudinea intercvartila
+    
     # Determinam valorile aberante
     val_aberante = which(S < Q1 - 1.5*IQR | S > Q3 + 1.5*IQR)
     # Eliminam valorile aberante din esantion
@@ -151,6 +163,8 @@ esantion_filtrat_S = functie_valori_aberante("note.csv", "S")
 ###################################################
 #A2 (c)
 
+#scriu conținutul vectorilor "esantion_filtrat_P" și "esantion_filtrat_S" în fișiere separate, "P.txt" și "S.txt"
+# append = FALSE : conținutul fișierelor va fi înlocuit cu noul conținut
 write(esantion_filtrat_P, file = "P.txt", append = FALSE, sep = "\n")
 write(esantion_filtrat_S, file = "S.txt", append = FALSE, sep = "\n")
 
