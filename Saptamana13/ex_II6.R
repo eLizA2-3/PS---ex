@@ -2,7 +2,7 @@
 
 interval_incredere = function(alfa)
 {
-  esantion = scan("data.txt")
+  esantion = scan("history.txt")
   
   media_vec = mean(esantion)
   len = length(esantion)
