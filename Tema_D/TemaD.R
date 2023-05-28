@@ -100,12 +100,12 @@ mediana = mediana_monte_carlo(S, a)
 cat("Mediana este ", mediana)
 
 #punctul (b)
-# 1 - 2/n^2 >= 1 - 10^(-7)
-# 2/n^2 <= 10^(-7)
-# n^2 >= 2 / 10^(-7)
-# n^2 >= 2 * 10^7
-# n >= sqrt(2 * 10^7)
-# n >= 4472.136
-# Rezulta ca dimensiunea a lui S S pentru care 
-#algoritmul de mai sus returneaza adevarata mediana a lui S
-#cu probabilitate de cel putin 1 − 10^(-7) este 4472.136
+# 1 - 2/n^2 <= 10^(-7)
+# 1 <= 2/n^2 + 10^(-7) |*n^2
+# n^2 <= 2 + 10^(-7) * n^2
+# n^2 - 10^(-7) * n^2 <= 2
+# (1 - 10^(-7)) * n^2 ≤ 2
+#n <= 1.4142
+
+# Rezulta ca dimensiunea a lui S  pentru care algoritmul de mai sus greseste 
+#cu o probabilitate de cel mult 1 − 10^(-7) este 1.4142
