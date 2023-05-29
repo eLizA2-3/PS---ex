@@ -184,11 +184,4 @@ nr_zile = 40
 nr_conturi_limita = replicate(nr_simulari, prob_dupa40_eroare(nr_zile))
 prob = sum(nr_conturi_limita <= 50000) / nr_simulari
 
-# calcularea intervalului de încredere
-z = qnorm(0.995)
-x = sqrt(prob*(1-prob)/nr_simulari)
-lower = prob - z*x
-upper = prob + z*x
-
 cat("Probabilitatea ca dupa", nr_zile, "zile sa existe cel mult 50000 de conturi false este", prob, "\n")
-cat("Intervalul de incredere pentru probabilitatea data este [", lower, ", ", upper, "]\n")
