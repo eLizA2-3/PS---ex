@@ -107,5 +107,6 @@ cat("Mediana este ", mediana)
 # (1 - 10^(-7)) * n^2 ≤ 2
 #n <= 1.4142
 
-# Rezulta ca dimensiunea a lui S  pentru care algoritmul de mai sus greseste 
-#cu o probabilitate de cel mult 1 − 10^(-7) este 1.4142
+# Rezulta ca dimensiunea a lui S  pentru care 
+#algoritmul de mai sus greseste 
+#cu probabilitate de cel mult 1 − 10^(-7) este 1.4142
