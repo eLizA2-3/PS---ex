@@ -1,15 +1,16 @@
 #1
-
+#a - constanta paraboloidului
+#n nr de puncte generate pt a estima volumul
 volum = function(a, n)
 {
   suma = 0;
-  for(i in 1:n)
+  for(i in 1:n) #la fiecare iteratie se genereaza 3 coordonate aleatorii
   {
     x1 = runif(1, -sqrt(a), sqrt(a))
     x2 = runif(1, -sqrt(a), sqrt(a))
     x3 = runif(1, 0, a)
     
-    if(x3 >= (x1*x1+x2*x2))
+    if(x3 >= (x1*x1+x2*x2)) #se verifica daca punctul (x1,x2,x3) se afla sub paraboloidul de revolutie
       suma = suma + 1;
   }
   return(suma/n)
@@ -21,27 +22,30 @@ for(i in 1:3)
   for(j in 1:3)
   {
     cat("Volumul paraboloidului de revolutie cand n =  ", n_vec[i], "si a egal cu ", vector_a[j], "este = ",volum(vector_a[i], n_vec[j]), "\n")
+    #eroarea absoluta = volumul estimat - valoarea teoretica
     cat("Eroarea absoluta este: " , abs(volum(vector_a[i], n_vec[j]) - (pi*vector_a[i])/2), "\n")
+    #eroarea relativa = eroarea absoluta / valoarea teoretica
     cat("Eroarea relativa este: ", abs(volum(vector_a[i], n_vec[j]) - ((pi*vector_a[i])/2))/abs((pi*vector_a[i])/2), "\n")
   }
 
 
 
 #2
+#programul estimează aria unui patrulater T
 arie_patrulater = function()
 {
   # numărul de puncte generate
   n = 20000
   
   # sunt generate n puncte aleatoare
-  x = runif(n, 0, 10)
-  y = runif(n, 0, 5)
+  x = runif(n, 0, 10) #coordonatele x sunt generate uniform in intervalul 0-10
+  y = runif(n, 0, 5) #coordonatele y sunt generate uniform in intervalul 0-5
   
   # Verificăm pentru fiecare punct dacă se află în interiorul patrulaterului T
   k = 0
   for (i in 1:n) {
     if (x[i] >= 0 && y[i] >= 0 && 3*y[i] <= x[i]+6 && y[i] <= 12-3*x[i])
-      k = k + 1
+      k = k + 1 #nr puncte in interiorul patrulaterului
   }
   
   # Estimez aria patrulaterului
@@ -53,35 +57,39 @@ cat("Aria patrulaterului T este ", arie_patrulater(), "\n")
 
 
 #3
+# functiile estimeaza o anumita integrala cu metoda MonteCarlo
+
 #punctul (a)
-integrare_function_a = function(n) {
+integrare_function_a = function(n) { #nr puncte generate pt estimarea integralei
   suma = 0;
+  
   for(i in 1:n) {
-    x = runif(1,-1, 1);
+    x = runif(1,-1, 1); #se genereaza un punct aleator x in intervalul -1,1
     suma = suma + (x+1)/sqrt(4-x*x);
+  }
+  return(suma/n); 
+}
+
+#punctul (b)
+integrare_function_b = function(n) { #nr puncte generate pt estimarea integralei
+  suma = 0;
+  
+  for(i in 1:n) {
+    x = runif(1, -1000, 0); #se genereaza un punct aleator x in intervalul -1000,0
+    suma = suma + 1/(x*x+4);
   }
   return(suma/n);
 }
 
-#punctul (b)
-integrare_function_b = function(n) {
-  suma = 0;
-  for(i in 1:n) {
-    x = runif(1, -1000, 0);
-    suma = suma + 1/(x*x+4);
-  }
-  return( suma/n);
-}
-
 #punctul (c)
-integrare_function_c = function(n) {
+integrare_function_c = function(n) { #nr puncte generate pt estimarea integralei
   suma = 0;
   
   for(i in 1:n) {
-    x = runif(1, -1000, 0);
+    x = runif(1, -1000, 0); #se genereaza un punct aleator x in intervalul -1000,0
     suma = suma + x*exp(x);
   }
-  return(abs( suma/n));
+  return(suma/n);
 }
 
 cat("(a) Aria estimata este " , integrare_function_a(100), "\n");
@@ -94,8 +102,7 @@ cat("(c) Aria estimata este " ,integrare_function_c(100), "\n");
 cat("Eroarea absoluta este " , abs(integrare_function_c(100) - (-1)), "\n")
 cat("Eroarea relativa este ", abs(integrare_function_c(100) - (-1))/abs(-1), "\n")
 
-
-
+  
 
 
 #4
@@ -165,23 +172,37 @@ cat("Probabilitatea ca dupa", nr_zile, "zile sa existe cel mult 50000 de conturi
 
 #punctul (c)
 
-prob_dupa40_eroare = function(nr_zile)
-{
-  n = 100 # numarul de conturi false initial
-  p = 0.2 # Probabilitatea de adaugare a unui cont fals in fiecare zi
-  q = 0.9 # Probabilitatea de dezactivare a unui cont fals
+prob_cu_eroare = function(margin, confidence_level) {
+  nr_simulari = 1
+  rata_s = 0 #rata de succes
   
-  conturi_false = n + rbinom(nr_zile, size = n, prob = p) # Adăugare de conturi false
-  for (i in 1:nr_zile)
-    conturi_false[i] = conturi_false[i] * rbinom(1, size = 1, prob = q) # Dezactivare de conturi false
+  while (TRUE) {
+    nr_succese = 0
+    
+    for (i in 1:nr_simulari) {
+      conturi_false = m
+      nr_zile = 0
+      
+      while (nr_zile < 40 && conturi_false > 50000) {
+        conturi_false = simulate_day()
+        nr_zile = nr_zile + 1
+      }
+      
+      if (conturi_false <= 50000) 
+        nr_succese = nr_succese + 1
+      
+    }
+    
+    rata_s = nr_succese / nr_simulari
+    margine_eroare = qnorm(1 - (1 - confidence_level) / 2) * sqrt(rata_s * (1 - rata_s) / nr_simulari)
+    
+    if (margine_eroare <= margin)
+      break
+    
+    nr_simulari = nr_simulari * ceiling((margine_eroare / margin)^2)
+  }
   
-  return(conturi_false[nr_zile])
-  
+  return(rata_s)
 }
 
-nr_simulari = 100000 # numarul de simulări
-nr_zile = 40
-nr_conturi_limita = replicate(nr_simulari, prob_dupa40_eroare(nr_zile))
-prob = sum(nr_conturi_limita <= 50000) / nr_simulari
-
-cat("Probabilitatea ca dupa", nr_zile, "zile sa existe cel mult 50000 de conturi false este", prob, "\n")
+print(paste("Probabilitatea cu o eroare de cel mult 0.01:", prob_cu_eroare(0.01, 0.99)))
