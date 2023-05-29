@@ -102,14 +102,14 @@ functie_a = function(file_name)
   cat("Mediana: ", round(mediana1, 3), "\n")
   cat("Deviatia standard: ", round(ds1, 3), "\n")
   cat("Cvartila 1: ", round(cvartil1[1], 3), "\n")
-  cat("Cvartila 2: ", round(cvartil1[2], 3), "\n\n")
+  cat("Cvartila 3: ", round(cvartil1[2], 3), "\n\n")
   
   cat("Statistici pentru al doilea esantion:\n")
   cat("Media: ", round(media2, 3), "\n") 
   cat("Mediana: ", round(mediana2, 3), "\n")
   cat("Deviatia standard: ", round(ds2, 3), "\n")
   cat("Cvartila 1: ", round(cvartil2[1], 3), "\n")
-  cat("Cvartila 2: ", round(cvartil2[2], 3), "\n\n\n")
+  cat("Cvartila 3: ", round(cvartil2[2], 3), "\n\n\n")
   
 }
 functie_a("note.csv")
